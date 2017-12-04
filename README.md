@@ -1,2 +1,2 @@
 # hello-world
-Initial application
+Something completely cheesey.
