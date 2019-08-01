@@ -9,8 +9,8 @@
 </head>
 <body>
     <center>
-        <h2>A processing error has occurred.  Please contact us at ...</h3>
-        <h3>${exception.message}</h2>
+        <h3>A processing error has occurred.  Please contact us at ...</h3>
+        <h2>${exception.message}</h2>
     </center>
 </body>
 </html>
