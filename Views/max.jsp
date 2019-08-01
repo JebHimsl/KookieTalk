@@ -1,0 +1,1 @@
+{"slide":${maxVals[0]},"lesson":${maxVals[1]},"chapter":${maxVals[2]},"title":${maxVals[3]}}

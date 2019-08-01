@@ -32,38 +32,53 @@
 				<h2 class="page-header">Instructor Registration Form:</h2>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+				<%
+					String emsg = (String)request.getAttribute("error");
+					if (emsg != null && !emsg.trim().equals("")) {
+				%>
+				<p class="alert-danger"><%=emsg%></p>
+				<%
+					}
+				%>
+			</div>
+		</div>
+		<div class="row">
+		&nbsp;&nbsp;&nbsp;<font color="red">*</font>&nbsp; required fields.<br>
+		</div>
 		<form:form action="saveInstructor" modelAttribute="user"
 			cssClass="form-horizontal" role="form">
 			<div class="form-row">
 				<div class="form-group col-md-6">
 					<label for="emailAddress"><spring:message
-							code="lbl.emailAddress" />:</label>
+							code="lbl.emailAddress" />:<font color="red">*</font></label>
 					<form:input path="emailAddress" cssClass="form-control" />
 					<form:errors path="emailAddress" cssClass="alert-danger" />
 				</div>
 				<div class="form-group col-md-6">
 					<label for="confirmEmail"><spring:message
-							code="lbl.confirmEmail" />:</label>
+							code="lbl.confirmEmail" />:<font color="red">*</font></label>
 					<form:input path="confirmEmail" cssClass="form-control" />
 					<form:errors path="confirmEmail" cssClass="alert-danger" />
 				</div>
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-6">
-					<label for="password"><spring:message code="lbl.password" />:</label>
-					<form:input path="password" cssClass="form-control" />
+					<label for="password"><spring:message code="lbl.password" />:<font color="red">*</font></label>
+					<form:password path="password" cssClass="form-control" />
 					<form:errors path="password" cssClass="alert-danger" />
 				</div>
 				<div class="form-group col-md-6">
 					<label for="confirmPwd"><spring:message
-							code="lbl.confirmPwd" />:</label>
-					<form:input path="confirmPwd" cssClass="form-control" />
+							code="lbl.confirmPwd" />:<font color="red">*</font></label>
+					<form:password path="confirmPwd" cssClass="form-control" />
 					<form:errors path="confirmPwd" cssClass="alert-danger" />
 				</div>
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-12">
-					<label for="timezoneId">Time Zone:</label>
+					<label for="timezoneId">Time Zone:<font color="red">*</font></label>
 					<form:select path="timezoneId" cssClass="form-control">
 						<form:option value="-" label="--Please Select" />
 						<form:option value="-" label="--Common Choices --" />
@@ -94,7 +109,7 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-4">
-					<label for="firstName"><spring:message code="lbl.firstName" />:</label>
+					<label for="firstName"><spring:message code="lbl.firstName" />:<font color="red">*</font></label>
 					<form:input path="firstName" cssClass="form-control" />
 					<form:errors path="firstName" cssClass="alert-danger" />
 				</div>
@@ -105,7 +120,7 @@
 					<form:errors path="middleName" cssClass="alert-danger" />
 				</div>
 				<div class="form-group col-md-4">
-					<label for="lastName"><spring:message code="lbl.lastName" />:</label>
+					<label for="lastName"><spring:message code="lbl.lastName" />:<font color="red">*</font></label>
 					<form:input path="lastName" cssClass="form-control" />
 					<form:errors path="lastName" cssClass="alert-danger" />
 				</div>
@@ -122,6 +137,25 @@
 					<form:errors path="dateOfBirth" cssClass="alert-danger" />
 				</div>
 			</div>
+			
+			<div class="form-row">
+				<div class="form-group col-md-2">
+					<label for="hPhone"><spring:message code="lbl.hPhone" />:</label>
+					<form:input path="hPhone" cssClass="form-control" />
+					<form:errors path="hPhone" cssClass="alert-danger" />
+				</div>
+				<div class="form-group col-md-2">
+					<label for="wPhone"><spring:message code="lbl.wPhone" />:</label>
+					<form:input path="wPhone" cssClass="form-control" />
+					<form:errors path="wPhone" cssClass="alert-danger" />
+				</div>
+				<div class="form-group col-md-2">
+					<label for="mPhone"><spring:message code="lbl.mPhone" />:</label>
+					<form:input path="mPhone" cssClass="form-control" />
+					<form:errors path="mPhone" cssClass="alert-danger" />
+				</div>
+			</div>
+			<!--  
 			<div class="form-row">
 				<label for="mAddress1"><spring:message code="lbl.mAddress1" />:</label>
 				<form:input path="mAddress1" cssClass="form-control" />
@@ -156,6 +190,7 @@
 					<form:errors path="mZip" cssClass="alert-danger" />
 				</div>
 			</div>
+			-->
 			<div class="form-group row">
 				<div class="offset-6 col-6">
 					<input type="submit" value="Save" name="btnSubmit"

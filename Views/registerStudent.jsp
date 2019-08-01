@@ -138,12 +138,12 @@
 					<form:errors path="nickName" cssClass="alert-danger" />
 				</div>
 				<div class="form-group col-md-4">
-					<label for="dateOfBirth"><spring:message code="lbl.dob" />:<font color="red">*</font></label>
+					<label for="dateOfBirth"><spring:message code="lbl.dob" />:</label>
 					<form:input path="dateOfBirth" cssClass="form-control" id="datepicker"/>
 					<form:errors path="dateOfBirth" cssClass="alert-danger" />
 				</div>
 			</div>
-			
+			 
 			<div class="form-row">
 				<div class="form-group col-md-2">
 					<label for="hPhone"><spring:message code="lbl.hPhone" />:</label>
@@ -161,7 +161,7 @@
 					<form:errors path="mPhone" cssClass="alert-danger" />
 				</div>
 			</div>
-			    
+			<!--    
 			<div class="form-row">
 				<label for="mAddress1"><spring:message code="lbl.mAddress1" />:</label>
 				<form:input path="mAddress1" cssClass="form-control" />
@@ -236,6 +236,7 @@
 					</div>
 				</div>
 			</div>
+			-->
 			<div class="form-group row">
 				<div class="offset-6 col-6">
 					<input type="submit" value="Save" name="btnSubmit"

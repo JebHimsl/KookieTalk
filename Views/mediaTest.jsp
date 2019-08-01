@@ -9,7 +9,7 @@
 
 <!-- 
 <script type="application/javascript"
-	src="<spring:url value='/resource/scripts/ps-webrtc-mediastream.js'/>"></script>  -->
+	src="<spring:url value='/resources/scripts/ps-webrtc-mediastream.js'/>"></script>  -->
 
 <!--  <script type="text/javascript" src="scripts/ps-webrtc-mediastream.js"></script>-->
 

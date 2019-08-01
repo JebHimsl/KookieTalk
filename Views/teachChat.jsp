@@ -47,6 +47,11 @@
 		}
 
 		function joinCall(sessionId, name) {
+			// start the recording
+			var startUrl = "http://ec2-52-38-67-29.us-west-2.compute.amazonaws.com:8080/KTRecorder/reaper?mode=sow&roomId=" + sessionId;
+			var endUrl = "http://ec2-52-38-67-29.us-west-2.compute.amazonaws.com:8080/KTRecorder/reaper?mode=reap&roomId=" + sessionId;
+			$.ajax({url: startUrl});
+			
 			// To join a video conference call Connect method
 			vidyoConnector
 					.Connect({
@@ -63,6 +68,10 @@
 						},
 						onDisconnected : function(reason) {
 							console.log(" disconnected - " + reason);
+							// stop the recording
+							$.ajax({url: endUrl});
+							// go back to classes list
+							form.back.submit();
 						}
 					})
 		}
@@ -189,7 +198,7 @@
 	
 	        currentIndex=imageIndex;
 	        //Otherwise update mainImage
-	        document.getElementById("mainImage").src='/kt/resource/images/lesson4/Slide' +  currentIndex  + '.GIF';
+	        document.getElementById("mainImage").src='/kt/resources/images/lesson4/Slide' +  currentIndex  + '.GIF';
 	        return;
 	    }
 	    
@@ -201,17 +210,20 @@
 			Conference:
 			<c:out value="${sessionId}" />
 		</h1>
+		<form name="back" id="back" action="/session/teachClasses">
+		</form>
+		
 		<div id="lesson" style="position: static; visibility: visible;">
-			<img src="<spring:url value='/resource/images/lesson4/Slide1.GIF' />"
+			<img src="<spring:url value='/resources/images/lesson4/Slide1.GIF' />"
 				id="mainImage" name="mainImage" width="50%" height="50%" alt=""><br>
 			<a href="#" onclick="swapImage(1);"><img
-				src="<spring:url value='/resource/images/first.png' />" border=0
+				src="<spring:url value='/resources/images/first.png' />" border=0
 				alt="First"></a> <a href="#" onclick="swapImage(currentIndex-1);"><img
-				src="<spring:url value='/resource/images/previous.png' />" border=0
+				src="<spring:url value='/resources/images/previous.png' />" border=0
 				alt="Back"></a> <a href="#" onclick="swapImage(currentIndex+1);"><img
-				src="<spring:url value='/resource/images/next.png' />" border=0
+				src="<spring:url value='/resources/images/next.png' />" border=0
 				alt="Next"></a> <a href="#" onclick="swapImage(maxIndex);"><img
-				src="<spring:url value='/resource/images/last.png' />" border=0
+				src="<spring:url value='/resources/images/last.png' />" border=0
 				alt="Last"></a>
 		</div>
 		<div>

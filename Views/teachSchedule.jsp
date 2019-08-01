@@ -10,14 +10,17 @@
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title><spring:message code="lbl.title" /></title>
-<script>
-	function formSubmit() {
-		document.getElementById("saveSchedule").submit();
-	}
-</script>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title><spring:message code="lbl.title" /></title>
+	<script>
+			var showNav = "schedule";
+	</script>
+	<script>
+		function formSubmit() {
+			document.getElementById("saveSchedule").submit();
+		}
+	</script>
 </head>
 <body>
 
@@ -39,23 +42,26 @@
 			</div>
 		</div>
 		<br />
-		<FORM id="saveSchedule" action="<c:url value="saveSchedule"/>"
-			method="post">
-			<input type="hidden" name="instructorId" value="${userid}" /> <input
-				type="hidden" name="weekNo" value="${scheduleWeek}" /> <input
-				type="hidden" name="year" value="${scheduleYear}" /> <input
-				type="hidden" name="period" value="${period}" /> Available to
-			instruct:<br>&nbsp;&nbsp;&nbsp;(Selections are inclusive, e.g
-			"From 8:00am through 11:30am" means you are available at 11:30am to
-			begin a session.) <BR> <BR>
-			<div class="form-group">
-				Sun<INPUT type="radio" name="day" value="0"> Mon<INPUT
-					type="radio" name="day" value="1"> Tue<INPUT type="radio"
-					name="day" value="2"> Wed<INPUT type="radio" name="day"
-					value="3"> Thu<INPUT type="radio" name="day" value="4">
-				Fri<INPUT type="radio" name="day" value="5"> Sat<INPUT
-					type="radio" name="day" value="6">
+		<FORM id="saveSchedule" action="<c:url value="saveSchedule"/>" method="post">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="instructorId" value="${userid}" /> 
+			<input type="hidden" name="weekNo" value="${scheduleWeek}" /> 
+			<input type="hidden" name="year" value="${scheduleYear}" /> 
+			<input type="hidden" name="period" value="${period}" /> 
+			<p>You may select (check) multiple days of the week to repeatedly set the same range of hours.  
+			You cannot delete a booked class, go to <a class="nav-link" href="<c:url value='/session/teachClasses'/>">Classes</a> 
+			to submit a cancellation request.</p>
+			<p>Available to instruct:</p>
+			<div class="form-check-inline">
+				<label class="form-check-label">Sun<INPUT type="checkbox" class="form-check-input" name="days" value="0"></label> 
+				<label class="form-check-label">Mon<INPUT type="checkbox" class="form-check-input" name="days" value="1"></label> 
+				<label class="form-check-label">Tue<INPUT type="checkbox" class="form-check-input" name="days" value="2"></label>  
+				<label class="form-check-label">Wed<INPUT type="checkbox" class="form-check-input" name="days" value="3"></label>  
+				<label class="form-check-label">Thu<INPUT type="checkbox" class="form-check-input" name="days" value="4"></label> 
+				<label class="form-check-label">Fri<INPUT type="checkbox" class="form-check-input" name="days" value="5"></label>  
+				<label class="form-check-label">Sat<INPUT type="checkbox" class="form-check-input" name="days" value="6"></label> 
 			</div>
+			<br/>
 			<div class="form-group">
 				&nbsp;From <SELECT name="starttime">
 					<OPTION value=""></OPTION>
@@ -158,7 +164,7 @@
 					<OPTION value="45">10:30pm</OPTION>
 					<OPTION value="46">11:00pm</OPTION>
 					<OPTION value="47">11:30pm</OPTION>
-				</SELECT>
+				</SELECT> *
 			</div>
 			<div class="form-group">
 				&nbsp; &nbsp; Action &nbsp; <SELECT name="action">
@@ -166,10 +172,14 @@
 					<OPTION value="2">Delete</OPTION>
 				</SELECT>
 			</div>
-			<BR> <BR> <INPUT class="btn btn-lg btn-primary"
+			<BR><INPUT class="btn btn-lg btn-primary"
 				type="submit" name="Submit" value="Submit"><BR> <BR>
 		</FORM>
-
+		<p>* Selections are inclusive, e.g "From 8:00am through 11:30am" means you are available at 11:30am to
+			begin a session.</p>
+		
+			
+		<p>Below is a visual representation of your schedule.  Blue cells are open, red cells are booked classes.</p>
 
 		<TABLE class="table table-bordered table-hover">
 			<TBODY>
