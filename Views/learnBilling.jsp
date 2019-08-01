@@ -5,14 +5,18 @@
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title><spring:message code="lbl.title" /></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title><spring:message code="lbl.title" /></title>
+	<script>
+			var showNav = "payment";
+	</script>
 </head>
 <body>
 	<div class="container-fluid">
 		<%@ include file="learnNav.jsp"%>
 		<h1>Pay here and set credits.</h1>
+		<%@ include file="messageCenter.jsp"%>
 		<form:form action="process" modelAttribute="payment" cssClass="form-horizontal" role="form">
 			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> 
 			<div class="form-row">
@@ -37,7 +41,12 @@
 			<div class="form-row">
 				<div class="form-group col-md-6">
 					<label for="amount">Amount: </label>
-					<form:input path="amount" cssClass="form-control" value="${payment.amount }" />
+					<form:select path="amount" value="${payment.cvv }">
+					<form:option value="0">Please select...</form:option>
+					<form:option value="50">One session - $50.00</form:option>
+					<form:option value="450">Ten sessions - $450.00</form:option>
+					<form:option value="4000">One hundred sessions - $4000.00</form:option>
+					</form:select>
 					<form:errors path="amount" cssClass="alert-danger" />
 				</div>
 			</div>

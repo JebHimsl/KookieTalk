@@ -8,29 +8,43 @@
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title><spring:message code="lbl.title" /></title>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script>
-	$(function() {
-		$("#datepicker").datepicker({
-			changeMonth : true,
-			changeYear : true,
-			dateFormat : "yy-mm-dd",
-			maxDate : "0D",
-			yearRange : "1900:-0"
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="_csrf" content="${_csrf.token}"/>
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
+	<title><spring:message code="lbl.title" /></title>
+	
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+			var showNav = "profile";
+	</script>
+	<script>
+		$(function() {
+			$("#datepicker").datepicker({
+				changeMonth : true,
+				changeYear : true,
+				dateFormat : "yy-mm-dd",
+				maxDate : "0D",
+				yearRange : "1900:-0"
+			});
 		});
-	});
-</script>
-<script>
-	function showBilling(chkbox) {
-		var visSetting = (chkbox.checked) ? "hidden" : "visible";
-		document.getElementById("billingAddress").style.visibility = visSetting;
-	}
-</script>
+	</script>
+	<script>
+		function showBilling(chkbox) {
+			var visSetting = (chkbox.checked) ? "hidden" : "visible";
+			document.getElementById("billingAddress").style.visibility = visSetting;
+		}
+	</script>
+	<script type="text/javascript">
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		 
+		$(document).ajaxSend(function(e, xhr, options) {
+		    xhr.setRequestHeader(header, token);
+		});
+	</script>
 </head>
 <body>
 	<div class="container-fluid">
@@ -53,7 +67,7 @@
 				%>
 			</div>
 		</div>
-		<p>Please tell us more about you...</p>
+		<p>Please tell us more about you.  Your photo and this information will be available to teachers.</p>
 		<c:if test="${photo != null}">
 		<div class="row">
 			<img src="<c:url value='/user/image'><c:param name='imageId' value='${photo.imageId}'/></c:url>" height="200px">
@@ -61,6 +75,7 @@
 		</c:if>
 		<form:form action="updateStudent" modelAttribute="student"
 			cssClass="form-horizontal" role="form" enctype="multipart/form-data">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 			<form:hidden path="emailAddress" value="${student.emailAddress }" />
 			<form:hidden path="confirmEmail" value="${student.emailAddress }" />
 			<form:hidden path="userId" value="${student.userId }" />
@@ -79,6 +94,7 @@
 				</div>
 			</div>
 			<div class="form-row">
+				<p style="red">Information below is only viewable by you. </p>
 				<p>The following information was obtained from your
 					registration. You may change any fields except email address.</p>
 			</div>
@@ -186,6 +202,7 @@
 					<form:errors path="mPhone" cssClass="alert-danger" />
 				</div>
 			</div>
+			<!--  
 			<div class="form-row">
 				<label for="mAddress1"><spring:message code="lbl.mAddress1" />:</label>
 				<form:input path="mAddress1" cssClass="form-control" />
@@ -262,6 +279,7 @@
 					</div>
 				</div>
 			</div>
+			-->
 			<div class="form-group row">
 				<div class="offset-6 col-6">
 					<input type="submit" value="Save" name="btnSubmit"

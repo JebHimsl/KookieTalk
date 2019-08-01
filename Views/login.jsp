@@ -20,11 +20,11 @@
 					<form role="form" method="post" action="<c:url value="/login"/>">
 						<div class="form-group">
 							<label for="Username">User Name (your email address): </label> 
-							<input type="text" class="form-control" placeholder="Enter Username" name="username" autofocus value="l@g.com"/>
+							<input type="text" class="form-control" placeholder="Enter Username" name="username" autofocus />
 						</div>
 						<div class="form-group">
 							<label for="Password">Password: </label> 
-							<input type="password" class="form-control" placeholder="Password" name="password" value="l"/>
+							<input type="password" class="form-control" placeholder="Password" name="password" />
 						</div>
 						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> 
 							
