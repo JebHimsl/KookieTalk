@@ -1,12 +1,11 @@
 package com.kookietalk.kt.entity;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class TeachSchedule {
 
-	private List sessions = new ArrayList();
+	private List<TeachSession> sessions = new ArrayList<TeachSession>();
 	
 	//don't use - sessions can only be added in bulk after checking database via ScheduleHelper
 	public void addSession(TeachSession session) {

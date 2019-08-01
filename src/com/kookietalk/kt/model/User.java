@@ -1,6 +1,9 @@
 package com.kookietalk.kt.model;
 
-import java.io.File;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -10,8 +13,6 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
-import com.kookietalk.kt.validations.ExpressionAssert;
 
 public class User {
 
@@ -57,13 +58,14 @@ public class User {
 	private int billingAddressId;
 	private int mailingAddressId;
 	private boolean mUse;
-	@NotNull
+	//@NotNull
     @DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date dateOfBirth;
 	private String role;
 	@NotNull
 	@NotEmpty
 	private String timezoneId;
+	
 	private String cv;
 	private CommonsMultipartFile[] image;
 
@@ -345,7 +347,23 @@ public class User {
 				+ Arrays.toString(image) + "]";
 	}
 
+	public Timestamp getUsersCurrentTime() {
+		Timestamp ts = null;
+		System.out.println("Getting time for: " + timezoneId);
+		LocalDateTime ldt= LocalDateTime.now(ZoneId.of(timezoneId));	
+		System.out.println("LDT: " + ldt.format(DateTimeFormatter.ofPattern("dd-M-yyyy hh:mm:ss a")));
+		
+		
+		return ts;
+	}
 	
+	public static void main(String[] args) {
+		
+		User user = new User();
+		user.setTimezoneId("America/Los_Angeles");
+		System.out.println(user.getUsersCurrentTime());
+		
+	}
 
 	
 }

@@ -1,6 +1,5 @@
 package com.kookietalk.kt.dao;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
@@ -10,10 +9,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.servlet.http.Part;
-
 import com.kookietalk.kt.entity.Image;
-import com.kookietalk.kt.model.User;
 
 public class ImageDAO extends BaseDAO {
 	
@@ -123,7 +119,7 @@ public class ImageDAO extends BaseDAO {
 	
 	public static boolean setImage(InputStream is, int userId, String type, String label) {
 		
-		System.out.println("In setImage: " + is + ":" + userId + ":" + type + ":" + label);
+		//System.out.println("In setImage: " + is + ":" + userId + ":" + type + ":" + label);
 		boolean result = false;
 		Connection conn = null;
 		PreparedStatement stmt = null;

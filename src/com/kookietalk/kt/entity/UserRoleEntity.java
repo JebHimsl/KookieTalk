@@ -1,9 +1,5 @@
 package com.kookietalk.kt.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 //@Entity
 //@Table(name = "user_role")
 public class UserRoleEntity {

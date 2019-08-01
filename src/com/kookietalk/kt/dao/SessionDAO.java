@@ -8,8 +8,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.TimeZone;
-
 import com.kookietalk.kt.entity.Session;
 
 public class SessionDAO extends BaseDAO {
@@ -44,6 +42,7 @@ public class SessionDAO extends BaseDAO {
 				sess.setTime(rs.getInt("time"));
 				sess.setWeek(rs.getInt("week"));
 				sess.setYear(rs.getInt("year"));
+				sess.setClosed(rs.getInt("closed"));
 				sessions.add(sess);
 				// System.out.println("Found [" + sess.getDay() + "] day and [" + sess.getTime()
 				// + "] time.");
@@ -79,7 +78,7 @@ public class SessionDAO extends BaseDAO {
 		return sessions;
 	}
 
-	// This get all the 'booked' sessions for this student
+	// This gets all the 'booked' sessions for this student
 	public static ArrayList<Session> getStudentSessions(int sId) {
 		ArrayList<Session> sessions = new ArrayList<Session>();
 		;
@@ -107,6 +106,7 @@ public class SessionDAO extends BaseDAO {
 				sess.setTime(rs.getInt("time"));
 				sess.setWeek(rs.getInt("week"));
 				sess.setYear(rs.getInt("year"));
+				sess.setClosed(rs.getInt("closed"));
 				sessions.add(sess);
 			}
 
@@ -178,11 +178,9 @@ public class SessionDAO extends BaseDAO {
 		return sessions;
 	}
 
-	// This get all the 'booked' sessions for this student
+	// This gets all the 'booked' sessions for this teacher
 	public static ArrayList<Session> getTeacherSessions(int tId) {
 		ArrayList<Session> sessions = new ArrayList<Session>();
-		;
-
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -206,6 +204,7 @@ public class SessionDAO extends BaseDAO {
 				sess.setTime(rs.getInt("time"));
 				sess.setWeek(rs.getInt("week"));
 				sess.setYear(rs.getInt("year"));
+				sess.setClosed(rs.getInt("closed"));
 				sessions.add(sess);
 			}
 
@@ -287,7 +286,7 @@ public class SessionDAO extends BaseDAO {
 		PreparedStatement stmt2 = null;
 		ResultSet rs = null;
 
-		String query1 = "insert into session values(NULL, ?, ?, ?, ?, ?, ?, ?)";
+		String query1 = "insert into session values(NULL, ?, ?, ?, ?, ?, ?, ?,?)";
 		String query2 = "select max(session_id) as mxsessionid from session where teacher_id=? and year=? and week=? and day=? and time=?";
 
 		try {
@@ -302,6 +301,7 @@ public class SessionDAO extends BaseDAO {
 			stmt.setInt(5, session.getDay());
 			stmt.setInt(6, session.getTime());
 			stmt.setTimestamp(7, new Timestamp(new Date().getTime()));
+			stmt.setInt(8, session.getClosed());
 			stmt.executeUpdate();
 
 			// *
@@ -348,6 +348,95 @@ public class SessionDAO extends BaseDAO {
 		}
 		return result;
 
+	}
+	
+	public static Session getSessionById(Integer sessionId) {
+		Session result = null;
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		String query1 = "select * from session where session_id=?";
+		
+		try {
+			conn = getConnection();
+			stmt = conn.prepareStatement(query1);
+			stmt.setInt(1, sessionId);
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				result = new Session();
+				result.setSessionId(rs.getInt("session_id"));
+				result.setStudentId(rs.getInt("student_id"));
+				result.setTeacherId(rs.getInt("teacher_id"));
+				result.setYear(rs.getInt("year"));
+				result.setWeek(rs.getInt("week"));
+				result.setDay(rs.getInt("day"));
+				result.setTime(rs.getInt("time"));
+				result.setCreated(rs.getTimestamp("created"));
+				result.setClosed(rs.getInt("closed"));
+			}
+			
+		} catch (SQLException sex) {
+			sex.printStackTrace();
+			
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException sex) {
+					sex.printStackTrace();
+				}
+			}
+
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sex) {
+					sex.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException sex) {
+					sex.printStackTrace();
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	public static void closeSession(Integer sessionId) {
+		Session result = null;
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		String query1 = "update session set closed=1 where session_id=?";
+		
+		try {
+			conn = getConnection();
+			stmt = conn.prepareStatement(query1);
+			stmt.setInt(1, sessionId);
+			stmt.executeUpdate();	
+		} catch (SQLException sex) {
+			sex.printStackTrace();
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException sex) {
+					sex.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException sex) {
+					sex.printStackTrace();
+				}
+			}
+		}
 	}
 
 }

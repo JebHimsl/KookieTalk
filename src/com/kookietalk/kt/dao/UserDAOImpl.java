@@ -1,16 +1,7 @@
 package com.kookietalk.kt.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.kookietalk.kt.entity.UserEntity;
 import com.kookietalk.kt.model.User;
@@ -22,7 +13,7 @@ public class UserDAOImpl implements UserDAO {
 		return new User();
 	}
 	
-	public List getUsers() {
+	public List<User> getUsers() {
 		return new ArrayList<User>();
 	}
 	

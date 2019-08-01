@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -30,7 +29,7 @@ public class PhotoController extends BaseController {
 	public String uploadImageCtlr(ModelMap model, HttpServletRequest request, @RequestParam MultipartFile file) {
 		String latestUploadPhoto = "";
 		String rootPath = request.getSession().getServletContext().getRealPath("/");
-		System.out.println("RootPath=[" + rootPath + "]");
+		//System.out.println("RootPath=[" + rootPath + "]");
 		File dir = new File(rootPath + File.separator + "img");
 		if (!dir.exists()) {
 			dir.mkdirs();
@@ -39,7 +38,7 @@ public class PhotoController extends BaseController {
 		File serverFile = new File(dir.getAbsolutePath() + File.separator + file.getOriginalFilename());
 		latestUploadPhoto = file.getOriginalFilename();
 		
-		System.out.println("Writing file to: " + serverFile.getAbsolutePath());
+		//System.out.println("Writing file to: " + serverFile.getAbsolutePath());
 
 		// write uploaded image to disk
 		/*

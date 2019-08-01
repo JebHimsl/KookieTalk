@@ -6,21 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 import javax.validation.Valid;
 
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -36,20 +29,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.kookietalk.kt.dao.ImageDAO;
+import com.kookietalk.kt.dao.LearnStatusDAO;
 import com.kookietalk.kt.dao.UserDAO;
 //import com.kookietalk.kt.dao.UserDAOImpl;
 import com.kookietalk.kt.dao.UserDAOJDBC;
 import com.kookietalk.kt.entity.Image;
+import com.kookietalk.kt.entity.LearnStatus;
 import com.kookietalk.kt.model.Payment;
+import com.kookietalk.kt.model.SessionStore;
 import com.kookietalk.kt.model.Timezone;
 import com.kookietalk.kt.model.User;
 import com.kookietalk.kt.services.AmazonSESSample;
-import com.kookietalk.kt.services.CalendarHelper;
 import com.kookietalk.kt.services.ChargeCreditCard;
 
 import net.authorize.api.contract.v1.ANetApiResponse;
 import net.authorize.api.contract.v1.MessageTypeEnum;
-import net.authorize.api.contract.v1.MessagesType;
 
 @Controller
 @RequestMapping("/user")
@@ -66,6 +60,20 @@ public class UserController {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 	
+    @RequestMapping("updateStatus")
+    public String updateStatus(Model model ,@RequestParam int title, @RequestParam int chapter, @RequestParam int lesson, @RequestParam int slide, @RequestParam int studentId){
+    	LearnStatus status = new LearnStatus();
+    	status.setTitle(title);
+    	status.setChapter(chapter);
+    	status.setLesson(lesson);
+    	status.setSlide(slide);
+    	status.setStudentId(studentId);
+    	LearnStatusDAO.updateStatus(status);
+    	return "blank";
+    }
+    
+    
+    
 	@RequestMapping("/image")
 	public String image(Model model) {
 
@@ -74,22 +82,40 @@ public class UserController {
 	}
 
 	@RequestMapping("/profile")
-	public String profile(Model model) {
+	public String profile(HttpSession session, Model model) {
 
-		model.addAttribute("user", new User());
+		User user = (User) session.getAttribute("user");
+		UserDAOJDBC udao = new UserDAOJDBC();
+		User teacher = udao.getUser(user.getUserId());
+		model.addAttribute("teacher", teacher);
+		model.addAttribute("timezoneList", UserController.getTimeZoneDD());
+		
+		// get user photo if it exists
+		Image image = ImageDAO.getUserPhoto(teacher.getUserId());
+		if(image != null) {
+			model.addAttribute("photo", image);
+		} else {
+			System.out.println("profile: Image is null");
+		}
+		
+		
+		
 		return "teachProfile";
 	}
 
 	@RequestMapping("/payment")
 	public String payment(Model model) {
 		model.addAttribute("user", new User());
+		model.addAttribute("payDate", "2019-08-01");
 		return "teachPayment";
 	}
 
 	@RequestMapping("/intro")
 	public String intro(HttpSession session, Model model) {
 
-		User student = (User) session.getAttribute("user");
+		User user = (User) session.getAttribute("user");
+		UserDAOJDBC udao = new UserDAOJDBC();
+		User student = udao.getUser(user.getUserId());
 		model.addAttribute("student", student);
 		model.addAttribute("timezoneList", UserController.getTimeZoneDD());
 		
@@ -98,7 +124,7 @@ public class UserController {
 		if(image != null) {
 			model.addAttribute("photo", image);
 		} else {
-			System.out.println("Image is null");
+			System.out.println("intro: Image is null");
 		}
 
 		return "learnIntro";
@@ -128,11 +154,16 @@ public class UserController {
 		String confirmPwd = user.getConfirmPwd().trim();
 		String email = user.getEmailAddress().trim();
 		String confirmEmail = user.getConfirmEmail().trim();
+		String tz = user.getTimezoneId();
 		if (!password.equals(confirmPwd)) {
 			buf.append("Password confirmation failed to match.<br>");
 			fail = true;
 		}
 		if (!email.equals(confirmEmail)) {
+			buf.append("Email confirmation failed to match.<br>");
+			fail = true;
+		}
+		if(tz.equals("-")) {
 			buf.append("Email confirmation failed to match.<br>");
 			fail = true;
 		}
@@ -148,7 +179,7 @@ public class UserController {
 			model.addAttribute("error", "Email address already in use.");
 			return "registerStudent";
 		}
-		System.out.println(saveOp);
+		//System.out.println(saveOp);
 		return "login";
 	}
 
@@ -192,7 +223,7 @@ public class UserController {
 		try {
 			if (image != null && image.length > 0) {
 				for (CommonsMultipartFile aFile : image) {
-					System.out.println("Saving file: " + aFile.getOriginalFilename());
+					//System.out.println("Saving file: " + aFile.getOriginalFilename());
 					if (!aFile.getOriginalFilename().equals("")) {
 						file = new File(directory + aFile.getOriginalFilename());
 						aFile.transferTo(file);
@@ -223,13 +254,93 @@ public class UserController {
 
 		// Save student info in database
 		UserDAOJDBC udao = new UserDAOJDBC();
-		System.out.println(student);
+		//System.out.println(student);
 		boolean saveOp = udao.updateStudent(student);
 		if (!saveOp) {
 			model.addAttribute("error", "Update failed.");
 			return "learnIntro";
 		}
 		return "learn";
+	}
+	
+	@RequestMapping("/updateTeacher")
+	public String updateTeacher(@Valid @ModelAttribute("teacher") User teacher, BindingResult result, Model model,
+			HttpServletRequest request, @RequestParam CommonsMultipartFile[] image) {
+		if (result.hasErrors()) {
+
+			List<FieldError> ers = result.getFieldErrors();
+			Iterator<FieldError> it = ers.iterator();
+			while (it.hasNext()) {
+				FieldError er = it.next();
+				System.out.println("Error in " + er.getField() + " : " + er.getDefaultMessage());
+			}
+
+			return "teachProfile";
+		}
+		// ... and check email and password confirmations
+		boolean fail = false;
+		StringBuffer buf = new StringBuffer();
+		String password = teacher.getPassword().trim();
+		String confirmPwd = teacher.getConfirmPwd().trim();
+		String email = teacher.getEmailAddress().trim();
+		String confirmEmail = teacher.getConfirmEmail().trim();
+		if (!password.equals(confirmPwd)) {
+			buf.append("Password confirmation failed to match.<br>");
+			fail = true;
+		}
+		if (!email.equals(confirmEmail)) {
+			buf.append("Email confirmation failed to match.<br>");
+			fail = true;
+		}
+
+		if (fail) {
+			model.addAttribute("error", buf.toString());
+			return "teachProfile";
+		}
+
+		String directory = "C:/dev/temp/";
+		File file = null;
+		try {
+			if (image != null && image.length > 0) {
+				for (CommonsMultipartFile aFile : image) {
+					//System.out.println("Saving file: " + aFile.getOriginalFilename());
+					if (!aFile.getOriginalFilename().equals("")) {
+						file = new File(directory + aFile.getOriginalFilename());
+						aFile.transferTo(file);
+					}
+				}
+			}
+		} catch (IOException ioex) {
+			ioex.printStackTrace();
+		}
+		
+		InputStream is = null;
+		boolean success = false;
+
+		if (file != null) {
+			try {
+				 is = new FileInputStream(file); 
+				 success = ImageDAO.setImage(is, teacher.getUserId(), "userPhoto", file.getName());
+				 if(success) {
+					 is.close();
+					 file.delete();
+				 }
+			} catch (FileNotFoundException fnfex) {
+				fnfex.printStackTrace();
+			} catch (IOException ioex) {
+				ioex.printStackTrace();
+			}
+		}
+
+		// Save student info in database
+		UserDAOJDBC udao = new UserDAOJDBC();
+		//System.out.println(student);
+		boolean saveOp = udao.updateTeacher(teacher);
+		if (!saveOp) {
+			model.addAttribute("error", "Update failed.");
+			return "teachProfile";
+		}
+		return "teach";
 	}
 
 	@RequestMapping("/newAdmin")
@@ -250,6 +361,7 @@ public class UserController {
 		String confirmPwd = user.getConfirmPwd().trim();
 		String email = user.getEmailAddress().trim();
 		String confirmEmail = user.getConfirmEmail().trim();
+		
 		if (!password.equals(confirmPwd)) {
 			buf.append("Password confirmation failed to match.<br>");
 			fail = true;
@@ -270,7 +382,7 @@ public class UserController {
 			model.addAttribute("error", "Email address already in use.");
 			return "registerAdmin";
 		}
-		System.out.println(saveOp);
+		//System.out.println(saveOp);
 		return "login";
 	}
 
@@ -307,6 +419,7 @@ public class UserController {
 		String confirmPwd = user.getConfirmPwd().trim();
 		String email = user.getEmailAddress().trim();
 		String confirmEmail = user.getConfirmEmail().trim();
+		String tz = user.getTimezoneId();
 		if (!password.equals(confirmPwd)) {
 			buf.append("Password confirmation failed to match.<br>");
 			fail = true;
@@ -315,6 +428,11 @@ public class UserController {
 			buf.append("Email confirmation failed to match.<br>");
 			fail = true;
 		}
+		if(tz.equals("-")) {
+			buf.append("Email confirmation failed to match.<br>");
+			fail = true;
+		}
+		
 
 		if (fail) {
 			model.addAttribute("error", buf.toString());
@@ -322,13 +440,13 @@ public class UserController {
 		}
 		// Save instructor info in database
 		UserDAO udao = new UserDAOJDBC();
-		System.out.println(user);
+		//System.out.println(user);
 		boolean saveOp = udao.saveTeacher(user);
 		if (!saveOp) {
 			model.addAttribute("error", "Email address already in use.");
 			return "registerInstructor";
 		}
-		System.out.println(saveOp);
+		//System.out.println(saveOp);
 		return "login";
 	}
 
@@ -344,7 +462,7 @@ public class UserController {
 
 			model.addAttribute("msg", "You have been logged out successfully.");
 		}
-		System.out.println("User credentials: " + user.toString());
+		//System.out.println("User credentials: " + user.toString());
 		session.setAttribute("user", user);
 
 		return "login";
@@ -390,25 +508,81 @@ public class UserController {
 	}
 	
 	@RequestMapping("/process")
-	public String process(@Valid @ModelAttribute("payment") Payment payment, BindingResult result, Model model) {
-		System.out.println("Processing CC payment");
+	public String process(HttpSession session, @Valid @ModelAttribute("payment") Payment payment, BindingResult result, Model model) {
+		//System.out.println("Processing CC payment");
+		String error = "";
+		if(payment.getAmount() == null || payment.getAmount() == 0) {
+			error += "Please select a number of classes to purchase.\n";
+		}
+		if(payment.getCcNumber() == null || payment.getCcNumber().trim().equals("")) {
+			error += "Please enter a valid credit card number.\n";
+		}
+		if(payment.getCvv() == null || payment.getCvv().trim().equals("")) {
+			error += "Please enter the appropriate CVV number from your card.\n";
+		}
+		if(payment.getExp() == null || payment.getExp().trim().equals("")) {
+			error += "Please enter the expriation date: ex: 04/22.\n";
+		}
+		if(error.trim().length() != 0) {
+			model.addAttribute("error", error);
+			return "learnBilling";
+		}
+		
 		if(result.hasErrors()) {
 			return "learnBilling";
 		}else {
-			String message = "";
+			
+			User user = (User)session.getAttribute("user");
+			int userId = user.getUserId();
 			boolean flag = false;
 			ChargeCreditCard ccc = new ChargeCreditCard();
 			ANetApiResponse response = ccc.process(payment.getCcNumber(), payment.getExp(), payment.getCvv(), payment.getAmount());
 			if(response != null  && response.getMessages().getResultCode() == MessageTypeEnum.OK) {	
 				// set 'flag' to true if everything  is OK
 				flag = true;
+				model.addAttribute("message", "Payment processed, credits updated.");
+				
+				// set the user credits
+				Double credits = 0.0;
+				if(payment.getAmount() == 50) {
+					credits = 1.0;
+				} else if(payment.getAmount() == 450) {
+					credits = 10.0;
+				} else if(payment.getAmount() == 4000) {
+					credits = 100.0;
+				}
+				double currentBal = LearnStatusDAO.getCredits(userId);
+				LearnStatusDAO.setCredits(userId, currentBal + credits);
+				
+				// return to either the pos or home depending on session state
+				
+				SessionStore ss = (SessionStore)session.getAttribute("session_store");
+				if(ss != null) {
+					model.addAttribute("message", "Credits updated.");
+					model.addAttribute("credits", currentBal + credits);
+					model.addAttribute("date", ss.getDate());
+					model.addAttribute("day", ss.getDay());
+					model.addAttribute("from", ss.getFrom());
+					model.addAttribute("instructor_id", ss.getInstructor_id());
+					model.addAttribute("instructorName", ss.getInstructorName());
+					model.addAttribute("student_id", ss.getStudent_id());
+					model.addAttribute("time", ss.getTime());
+					model.addAttribute("week", ss.getWeek());
+					model.addAttribute("year", ss.getYear());
+					session.removeAttribute("session_store");
+					return "learnConfirm";
+				}
 			}
 			
 			if(!flag) {
-				model.addAttribute("message", "Something went wrong... will include real message later.");
+				model.addAttribute("error", "Something went wrong... will include real message later.");
 				return "learnBilling";
 			}
 		}
+		
+		// Go to a payment confirmation/receipt page
+		// Once there, return to either home or get fancy and go back to learnConfirm with session data...
+		
 		return "learn";
 	}
 
@@ -445,7 +619,7 @@ public class UserController {
 			Timezone zone = it.next();
 			String key = zone.getKey();
 			String value = zone.getValue();
-			System.out.println(key + " : " + value);
+			//System.out.println(key + " : " + value);
 		}
 
 	}

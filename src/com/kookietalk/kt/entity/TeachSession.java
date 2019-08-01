@@ -1,7 +1,5 @@
 package com.kookietalk.kt.entity;
 
-import javax.validation.constraints.NotNull;
-
 public class TeachSession {
 
 	private int instructorId;
@@ -12,6 +10,7 @@ public class TeachSession {
 	private int action;
 	private int year;
 	private String period;
+	private int[] days;
 	
 	
 
@@ -44,6 +43,14 @@ public class TeachSession {
 		this.year = year;
 	}
 
+
+	public int[] getDays() {
+		return days;
+	}
+
+	public void setDays(int[] days) {
+		this.days = days;
+	}
 
 	public int getInstructorId() {
 		return instructorId;

@@ -9,7 +9,7 @@ public class CalendarHelper {
 		// TODO Auto-generated method stub
 		
 		CalendarHelper.showPeriods();
-		System.out.println(CalendarHelper.formatDisplay(new Date()));
+		//System.out.println(CalendarHelper.formatDisplay(new Date()));
 		
 	}
 
@@ -32,12 +32,12 @@ public class CalendarHelper {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 		String lastPeriod = CalendarHelper.formatDate(cal.getTime());
-		System.out.println("lastPeriod: " + lastPeriod);
+		//System.out.println("lastPeriod: " + lastPeriod);
 		cal.add(Calendar.WEEK_OF_YEAR, 1);
 		String nextPeriod = CalendarHelper.formatDate(cal.getTime());
-		System.out.println("nextPeriod: " + nextPeriod);
+		//System.out.println("nextPeriod: " + nextPeriod);
 		cal.add(Calendar.WEEK_OF_YEAR, 1);
 		String secondPeriod = CalendarHelper.formatDate(cal.getTime());
-		System.out.println("secondPeriod: " + secondPeriod);
+		//System.out.println("secondPeriod: " + secondPeriod);
 	}
 }

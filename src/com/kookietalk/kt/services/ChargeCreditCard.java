@@ -1,15 +1,9 @@
 package com.kookietalk.kt.services;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Properties;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
@@ -29,6 +23,7 @@ public class ChargeCreditCard {
 	public ChargeCreditCard() {
 		AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 		Properties props = (Properties) context.getBean("properties");
+		context.close();
 		apiLoginId = props.getProperty("apiLoginId");
 		transactionKey = props.getProperty("transactionKey");
 		environment = props.getProperty("environment");
@@ -38,7 +33,7 @@ public class ChargeCreditCard {
 		// ANetApiResponse result = null;
 
 		// Get ANet configuration values from properties file
-		System.out.println("Got props --> id[" + apiLoginId + "] key[" + transactionKey + "]");
+		//System.out.println("Got props --> id[" + apiLoginId + "] key[" + transactionKey + "]");
 		// Set the request to operate in either the sandbox or production environment
 		if (environment.equals("sandbox")) {
 			ApiOperationBase.setEnvironment(Environment.SANDBOX);

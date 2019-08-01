@@ -27,7 +27,7 @@ public class ScheduleDAO extends BaseDAO {
 			stmt.setInt(3, year);
 			rs = stmt.executeQuery();
 			if(rs.next()) {
-				System.out.println("Found existing schedule in getSchedule");
+				//System.out.println("Found existing schedule in getSchedule");
 				result.add(rs.getString("SUNDAY"));
 				result.add(rs.getString("MONDAY"));
 				result.add(rs.getString("TUESDAY"));
@@ -36,7 +36,7 @@ public class ScheduleDAO extends BaseDAO {
 				result.add(rs.getString("FRIDAY"));
 				result.add(rs.getString("SATURDAY"));
 			} else {
-				System.out.println("Did not find existing schedule in getSchedule");
+				//System.out.println("Did not find existing schedule in getSchedule");
 				for(int i = 0; i < 7; i++) {
 					result.add("000000000000000000000000000000000000000000000000");
 				}
@@ -90,9 +90,9 @@ public class ScheduleDAO extends BaseDAO {
 			stmt.setInt(3, year);
 			rs = stmt.executeQuery();
 			boolean found = false;
-			System.out.println("Checking for existing schedule...");
+			//System.out.println("Checking for existing schedule...");
 			if (rs.next()) {
-				System.out.println("schedule found.");
+				//System.out.println("schedule found.");
 				found = true;
 				currentSchedule.add(rs.getString("SUNDAY"));
 				currentSchedule.add(rs.getString("MONDAY"));
@@ -103,7 +103,7 @@ public class ScheduleDAO extends BaseDAO {
 				currentSchedule.add(rs.getString("SATURDAY"));
 			}
 			if (!found) {
-				System.out.println("schedule not found.");
+				//System.out.println("schedule not found.");
 				stmt2 = conn.prepareStatement(query2);
 				stmt2.setInt(1, userId);
 				stmt2.setInt(2, weekNo);
@@ -121,6 +121,7 @@ public class ScheduleDAO extends BaseDAO {
 				}
 			}
 			// Now update the schedule
+			@SuppressWarnings("unused")
 			String toUpdate = currentSchedule.get(day);
 			String updateDay = null;
 			switch (day) {

@@ -1,8 +1,5 @@
 package com.kookietalk.kt.model;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-
 public class Address {
 
 	

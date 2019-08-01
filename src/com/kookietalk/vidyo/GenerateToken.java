@@ -3,9 +3,8 @@ package com.kookietalk.vidyo;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.HmacUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import com.kookietalk.kt.entity.Session;
+
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 
@@ -15,6 +14,7 @@ public class GenerateToken {
 	private static final long EPOCH_SECONDS = 62167219200l;
 	private static final String DELIM = "\0";
 
+	@SuppressWarnings("deprecation")
 	public static String generateProvisionToken(String key, String jid, String expires, String vcard)
 			throws NumberFormatException {
 		String payload = String.join(DELIM, PROVISION_TOKEN, jid, expires, vcard);
@@ -29,6 +29,7 @@ public class GenerateToken {
 		return "" + (EPOCH_SECONDS + currentUnixTimestamp + expiresLong);
 	}
 
+	@SuppressWarnings("unused")
 	private static void printUsageAndExit() {
 		System.out.println();
 		System.out.println("This script will generate a provision login token from a developer key");
@@ -158,7 +159,7 @@ public class GenerateToken {
 	}
 	/**/
 
-	public static String getToken(String expiresAt) {
+	public static String getToken(String expiresAt, String userName) {
 
 		String token = null;
 		
@@ -178,15 +179,29 @@ public class GenerateToken {
 
 		expires = String.valueOf(EPOCH_SECONDS + instant.getEpochSecond());
 		
-		token = generateProvisionToken("26261bcb97e34baf9a14e7094f383c4f", "Kookie" + "@" + "c37714.vidyo.io", expires, "");
+		if(userName == null || userName.trim().equals("")) {
+			userName = "Student";
+		}
+		
+		System.out.println("Generating token for: " + userName);
+		token = generateProvisionToken("26261bcb97e34baf9a14e7094f383c4f", userName + "@" + "c37714.vidyo.io", expires, "");
 		
 
+		return token;
+	}
+	
+	public static String getToken(Session session, String userName) {
+		String token = null;
+		String sessEnd = session.getSessionExpiration();
+		//System.out.println("Session expiration time is: "  + sessEnd);
+		token = GenerateToken.getToken(sessEnd, userName);
+		//System.out.println("Generated token: " + token);
 		return token;
 	}
 	
 	public static void main(String[] args) {
 		
 		String expire = "2055-10-27T10:54:22Z";
-		System.out.println("Token: " + getToken(expire));
+		System.out.println("Token: " + getToken(expire, "Dumbo"));
 	}
 }

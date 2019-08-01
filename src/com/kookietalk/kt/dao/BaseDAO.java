@@ -7,16 +7,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.kookietalk.kt.entity.Session;
-
 public class BaseDAO {
 
 	public static Connection getConnection() {
 		Connection conn = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager
-					.getConnection("jdbc:mysql://kookie.cygio3os2zym.us-west-2.rds.amazonaws.com:3306/kookiedev?useSSL=false&user=kookiedev&password=kookiedev");
+			conn = DriverManager.getConnection("jdbc:mysql://kookie.cygio3os2zym.us-west-2.rds.amazonaws.com:3306/kookiedev?useSSL=false&user=kookiedev&password=kookiedev");
+			//conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/ktdb?useSSL=false&user=root&password=Ms@2441");
+			if(conn == null) {
+				System.out.println("Failed to get connection, retrying...");
+				conn = DriverManager.getConnection("jdbc:mysql://kookie.cygio3os2zym.us-west-2.rds.amazonaws.com:3306/kookiedev?useSSL=false&user=kookiedev&password=kookiedev");
+			}
+
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

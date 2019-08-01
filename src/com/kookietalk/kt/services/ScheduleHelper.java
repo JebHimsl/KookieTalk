@@ -48,6 +48,17 @@ public class ScheduleHelper {
 	 * false; } } if (save) { endtime = length - 1; ts.setEndtime(endtime);
 	 * schedule.add(ts); } day++; } return schedule; } /
 	 **/
+	
+	public static int getSlot(Calendar cal) {
+		int result = 0;
+		int hour = cal.get(Calendar.HOUR_OF_DAY);
+		int min = cal.get(Calendar.MINUTE);
+		result = hour * 2;
+		if(min >= 30) {
+			result++;
+		}
+		return result;
+	}
 
 	public static String getPeriod(Integer week) {
 		String result = null;
@@ -184,8 +195,7 @@ public class ScheduleHelper {
 			TimeZone local) {
 		ArrayList<Session> result = new ArrayList<Session>();
 
-		System.out.println("In getRemoteSessions: iId[" + instructorId + "] year[" + year + "] week[" + week + "] zone["
-				+ zone.getID() + "] local[" + local.getID() + "]");
+		//System.out.println("In getRemoteSessions: iId[" + instructorId + "] year[" + year + "] week[" + week + "] zone[" + zone.getID() + "] local[" + local.getID() + "]");
 
 		// Is the user's zone ahead or behind the local zone.
 		long offsetDate = new Date().getTime();
@@ -202,13 +212,13 @@ public class ScheduleHelper {
 		ArrayList<Session> out = ScheduleHelper.parseRemoteSessions(oTaken, zone, local);
 		ArrayList<Session> out2 = ScheduleHelper.parseRemoteSessions(o2Taken, zone, local);
 
-		System.out.println("Current sessions after parsing: " + current.size());
+		//System.out.println("Current sessions after parsing: " + current.size());
 
 		// Remove any not in requested week
 		Iterator<Session> it2 = current.iterator();
 		while (it2.hasNext()) {
 			Session session = it2.next();
-			System.out.println("Evaluating session: " + session.toString());
+			//System.out.println("Evaluating session: " + session.toString());
 			int sessWeek = session.getWeek();
 			if (sessWeek == week) {
 				result.add(session);
@@ -217,7 +227,7 @@ public class ScheduleHelper {
 		Iterator<Session> it = out.iterator();
 		while (it.hasNext()) {
 			Session session = it.next();
-			System.out.println("Evaluating session_o: " + session.toString());
+			//System.out.println("Evaluating session_o: " + session.toString());
 			int sessWeek = session.getWeek();
 			if (sessWeek == week) {
 				result.add(session);
@@ -226,7 +236,7 @@ public class ScheduleHelper {
 		Iterator<Session> it3 = out2.iterator();
 		while (it3.hasNext()) {
 			Session session = it3.next();
-			System.out.println("Evaluating session_o2: " + session.toString());
+			//System.out.println("Evaluating session_o2: " + session.toString());
 			int sessWeek = session.getWeek();
 			if (sessWeek == week) {
 				result.add(session);
@@ -302,18 +312,18 @@ public class ScheduleHelper {
 			int day = sess.getDay();
 			int time = sess.getTime();
 
-			System.out.println("Adjusting session from: " + sess.toString());
+			//System.out.println("Adjusting session from: " + sess.toString());
 
 			// the day upon which to calculate the offset (daylight savings factor)
 			Date offsetDate = new Date();
 			//Date offsetDate = ScheduleHelper.getDate(year, week, day + 1, 2, 00);
-			System.out.println("Using OD: " + CalendarHelper.formatDisplay(offsetDate));
+			//System.out.println("Using OD: " + CalendarHelper.formatDisplay(offsetDate));
 
 			// this is the offSet units to add to 'time'
 			double zoneOffsetUnits = ScheduleHelper.getOffsetUnits(zone, offsetDate);
 			double localOffsetUnits = ScheduleHelper.getOffsetUnits(local, offsetDate);
-			System.out.println("ZO: " + zoneOffsetUnits);
-			System.out.println("LO: " + localOffsetUnits);
+			//System.out.println("ZO: " + zoneOffsetUnits);
+			//System.out.println("LO: " + localOffsetUnits);
 			
 
 			int offsetUnits = 0;
@@ -335,7 +345,7 @@ public class ScheduleHelper {
 				}
 			}
 			offsetUnits *= arrow;
-			System.out.println("Offset: " + offsetUnits);
+			//System.out.println("Offset: " + offsetUnits);
 
 			int adjTime = time + offsetUnits;
 			int adjDay = day;
@@ -377,7 +387,7 @@ public class ScheduleHelper {
 			newSess.setStudentName(sess.getStudentName());
 			newSess.setInstructorName(sess.getInstructorName());
 
-			System.out.println("Adjusted session to: " + newSess.toString());
+			//System.out.println("Adjusted session to: " + newSess.toString());
 
 			adjSessions.add(newSess);
 		}
@@ -714,6 +724,7 @@ public class ScheduleHelper {
 			int adjETime = endtime + offsetUnits;
 			int adjEDay = day;
 			int adjEWeek = week;
+			@SuppressWarnings("unused")
 			int adjEYear = year;
 			if (adjETime < 0) {
 				adjETime += 48;
@@ -837,7 +848,7 @@ public class ScheduleHelper {
 			Date remoteTime = cal.getTime();
 			
 			String display = CalendarHelper.formatDisplay(remoteTime);
-			System.out.println("Setting TimeLabel to: " + display);
+			//System.out.println("Setting TimeLabel to: " + display);
 			sess.setTimeLabel(display);
 			result.add(sess);
 		}

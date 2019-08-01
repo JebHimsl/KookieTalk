@@ -74,7 +74,7 @@ public class AmazonSESSample {
 
 		// Send the message.
 		try {
-			System.out.println("Sending...");
+			//System.out.println("Sending...");
 
 			// Connect to Amazon SES using the SMTP username and password you specified
 			// above.
@@ -82,7 +82,7 @@ public class AmazonSESSample {
 
 			// Send the email.
 			transport.sendMessage(msg, msg.getAllRecipients());
-			System.out.println("Email sent!");
+			//System.out.println("Email sent!");
 		} catch (Exception ex) {
 			System.out.println("The email was not sent.");
 			System.out.println("Error message: " + ex.getMessage());
@@ -98,7 +98,8 @@ public class AmazonSESSample {
 			to = "jeb@kookietalk.com";
 		}
 		token = "123456";
-		link = "https://kookiedev-905122306.us-west-2.elb.amazonaws.com/kt/user/resetPwd?token=" + token;
+		//link = "https://kookiedev-905122306.us-west-2.elb.amazonaws.com/kt/user/resetPwd?token=" + token;
+		link = "https://recorder-1789396171.us-west-2.elb.amazonaws.com/kt/user/resetPwd?token=" + token;
 		String formatLink = "<br><a href=\"" + link + "\">Click here to complete password reset</a>";
 
 		// Create a Properties object to contain connection configuration information.
@@ -129,7 +130,7 @@ public class AmazonSESSample {
 
 		// Send the message.
 		try {
-			System.out.println("Sending...");
+			//System.out.println("Sending...");
 
 			// Connect to Amazon SES using the SMTP username and password you specified
 			// above.
@@ -137,7 +138,7 @@ public class AmazonSESSample {
 
 			// Send the email.
 			transport.sendMessage(msg, msg.getAllRecipients());
-			System.out.println("Email sent!");
+			//System.out.println("Email sent!");
 		} catch (Exception ex) {
 			System.out.println("The email was not sent.");
 			System.out.println("Error message: " + ex.getMessage());
